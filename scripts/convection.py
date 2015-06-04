@@ -479,6 +479,8 @@ if __name__ == '__main__':
                         help='Maximum time to evolve the model to in years')
     parser.add_argument('--dstep', default=5.0e3, type=float,
                         help='Intervals at which to save snapshots in years')
+    parser.add_argument('--offIrr', action='store_true',
+                        help='If present, turn off irradiation heating.')
     parser.add_argument('--rmStripe', action='store_true',
                         help='If present, remove region 5 opacity stripe.')
     parser.add_argument('--smoothT', action='store_true',
