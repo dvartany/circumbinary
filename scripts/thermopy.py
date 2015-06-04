@@ -30,7 +30,7 @@ def fv(r, T, Sigma):
     return 1.125 * Omega(r)*alpha*k*T/mu * Sigma
 
 def Tirr(r, q, offIrr=False):
-    if off:
+    if offIrr:
         return 0.0
     else:
         if q == 0:
