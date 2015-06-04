@@ -273,7 +273,7 @@ class Circumbinary(object):
         else:
             self.vr = self.vrVisc
             mask_coeff = (self.mesh.facesLeft * self.mesh.faceNormals).getDivergence()
-            self.eq = TransientTerm(var=self.Sigma) == - UpwindTerm(coeff=self.vr, var=self.Sigma)\
+            self.eq = TransientTerm(var=self.Sigma) == - DiffusionTerm(coeff=self.vr, var=self.Sigma)\
                                                        - mask_coeff*3.0/2*self.nu/self.mesh.x*self.Sigma.old
 
     def dimensionalSigma(self, SigmaArr=None):
