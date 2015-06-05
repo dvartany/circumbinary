@@ -151,11 +151,11 @@ class Circumbinary(object):
         dr = tuple(np.exp(logFacesRight) - np.exp(logFacesLeft))
         self.mesh = CylindricalGrid1D(dr=dr, origin=(self.rmin,))
 
-    def _genSigma(self, width=0.1):
+    def _genSigma(self, width=0.1, expinit=1.0):
         """Create dependent variable Sigma"""
         # Gaussian initial condition
         value = self.mDisk*M/np.sqrt(2*np.pi)/(self.gamma*a*width)*\
-                np.exp(-0.5*np.square(self.r-1.0)/width**2)/(2*np.pi*self.gamma*self.r*a)
+                np.exp(-0.5*np.square(self.r-expinit)/width**2)/(2*np.pi*self.gamma*self.r*a)
         # Make it dimensionless
         value /= self.mDisk*M/(self.gamma*a)**2
         idxs = np.where(self.r < 0.1)
@@ -457,6 +457,8 @@ if __name__ == '__main__':
                         help='The mass of the central star(s)')
     parser.add_argument('--gamma', default=100, type=float,
                         help='constant (multiplied by 0.2 AU) that determines location of disk relative to star')
+    parser.add_argument('--expinit', default=1.0, type=float,
+                        help='location (multiplied by gamma*0.2 AU) that determines initial location of Gaussian disk')
     parser.add_argument('--smoothing', default=0.0, type=float,
                         help='Smoothing parameter to pass to RectBivariateSpline.')
     parser.add_argument('--ncell', default=300, type=int,
