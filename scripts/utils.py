@@ -552,6 +552,31 @@ def plotAngloss(circ):
     axaspect.set_ylabel(r'Fraction of Binary Angular Momentum Lost')
     
     return fig
+
+def plotmassloss(circ, logLog=True):
+    #plot mass lost by disk over time
+    Ms = 1.9891e33
+    fig = plt.figure()
+    
+    axmass = plt.subplot(1, 1, 1)
+    
+    accret = np.zeros(1001)
+    
+    for i, t in enumerate(circ.times):
+        circ.loadTime(t)
+        r = circ.r[:-1]*a*circ.gamma
+        Sigma = circ.dimensionalSigma()
+        accret[i] = sum(Sigma*2*np.pi*circ.mesh.cellVolumes*(a*circ.gamma)**2)
+    
+    if logLog:
+        axmass.loglog(circ.dimensionalTime(circ.times),accret/Ms)
+    else:
+        axmass.semilogx(circ.dimensionalTime(circ.times),accret/Ms)
+        
+    axmass.set_xlabel(r't (yrs)')
+    axmass.set_ylabel(r'Disk Mass in $M_{\odot}$')
+    
+    return fig
     
 def getTeff(circ, tau=None, Rmax = 270, tauMin=0.0001):
     """
