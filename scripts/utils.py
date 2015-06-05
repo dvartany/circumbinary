@@ -560,7 +560,7 @@ def plotmassloss(circ, logLog=True):
     
     axmass = plt.subplot(1, 1, 1)
     
-    accret = np.zeros(1001)
+    accret = np.zeros(len(circ.times))
     
     for i, t in enumerate(circ.times):
         circ.loadTime(t)
