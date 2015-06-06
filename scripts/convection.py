@@ -134,9 +134,9 @@ class Circumbinary(object):
         self.r = self.mesh.cellCenters.value[0]
         self.rF = self.mesh.faceCenters.value[0]
         if self.q > 0.0:
-            self.gap = np.where(self.rF < 1.7/gamma)
+             = np.where(self.rF < 1.7*self.rmin)
         else:
-            self.gap = np.where(self.rF < 1.0/gamma)
+            self.gap = np.where(self.rF < 1.0*self.rmin)
         self._genSigma()
         self._genTorque()
         self._genT(bellLin=self.bellLin, tol = 0.0, **kargs)
