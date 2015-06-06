@@ -134,7 +134,7 @@ class Circumbinary(object):
         self.r = self.mesh.cellCenters.value[0]
         self.rF = self.mesh.faceCenters.value[0]
         if self.q > 0.0:
-             = np.where(self.rF < 1.7*self.rmin)
+            self.gap = np.where(self.rF < 1.7*self.rmin)
         else:
             self.gap = np.where(self.rF < 1.0*self.rmin)
         self._genSigma()
