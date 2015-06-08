@@ -605,9 +605,9 @@ def plotaccret(circ, logLog=True):
             dM[i] = diskmass[i-1] - sum(Sigma*2*np.pi*circ.mesh.cellVolumes*(a*circ.gamma)**2)
       
     if logLog:
-        axaccret.loglog(circ.dimensionalTime(circ.times),dM/dt)
+        axaccret.loglog(circ.dimensionalTime(circ.times),dM/dt/Ms)
     else:
-        axaccret.semilogx(circ.dimensionalTime(circ.times),dM/dt)
+        axaccret.semilogx(circ.dimensionalTime(circ.times),dM/dt/Ms)
         
     axaccret.set_xlabel(r't (yrs)')
     axaccret.set_ylabel(r'WD Accretion in $M_{\odot}$/yr')
