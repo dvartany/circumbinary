@@ -578,6 +578,42 @@ def plotmassloss(circ, logLog=True):
     
     return fig
     
+def plotaccret(circ, logLog=True):
+    #plot mass lost by disk over time
+    Ms = 1.9891e33
+    fig = plt.figure()
+    
+    axaccret = plt.subplot(1, 1, 1)
+    
+    dM = np.zeros(len(circ.times))
+    diskmass = np.zeros(len(circ.times))
+    dt = np.zeros(len(circ.times))
+    
+    dstep = circ.dimensionalTime(circ.times)[1] - circ.dimensionalTime(circ.times)[0]
+    dt.fill(dstep)
+    
+    
+    for i, t in enumerate(circ.times):
+        circ.loadTime(t)
+        r = circ.r[:-1]*a*circ.gamma
+        Sigma = circ.dimensionalSigma()
+        if i == 0:
+            dM[i] = 0.06*M - sum(Sigma*2*np.pi*circ.mesh.cellVolumes*(a*circ.gamma)**2)
+            diskmass[i] = sum(Sigma*2*np.pi*circ.mesh.cellVolumes*(a*circ.gamma)**2)
+        else:
+            diskmass[i] = sum(Sigma*2*np.pi*circ.mesh.cellVolumes*(a*circ.gamma)**2)
+            dM[i] = diskmass[i-1] - sum(Sigma*2*np.pi*circ.mesh.cellVolumes*(a*circ.gamma)**2)
+      
+    if logLog:
+        axaccret.loglog(circ.dimensionalTime(circ.times),dM/dt)
+    else:
+        axaccret.semilogx(circ.dimensionalTime(circ.times),dM/dt)
+        
+    axaccret.set_xlabel(r't (yrs)')
+    axaccret.set_ylabel(r'WD Accretion in $M_{\odot}$/yr')
+    
+    return fig
+    
 def getTeff(circ, tau=None, Rmax = 270, tauMin=0.0001):
     """
     Return an array with the effective temperature as defined
