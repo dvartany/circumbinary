@@ -114,7 +114,7 @@ def getBracket(r, Sigma, idx):
         return 9767.78 * (Omega(r) * Sigma * (k/mu)**0.5)**0.0408163, 19529.8 *(Omega(r) * Sigma * (k/mu)**0.5)**0.325581
     
     elif idx == 12:
-        return 19529.8 *(Omega(r) * Sigma * (k/mu)**0.5)**0.325581, 5.0e7
+        return 19529.8 *(Omega(r) * Sigma * (k/mu)**0.5)**0.325581, 5.0e9
     else:
         raise ValueError("Opacity index out of range")
 
