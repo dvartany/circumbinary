@@ -111,7 +111,7 @@ def pickle_results(filename=None, verbose=True):
 class Circumbinary(object):
     def __init__(self, rmin=1.0e-2, rmax=1.0e4, ncell=300, dt=1.0e-6, delta=1.0e-100,
                  fudge=1.0e-3, q=1.0, gamma=100, mdisk=0.1, odir='output',
-                 bellLin=True, emptydt=0.001, **kargs):
+                 bellLin=True, emptydt=0.001, width=0.1, expinit=1.0, **kargs):
         self.rmax = rmax
         self.rmin = rmin
         self.ncell = ncell
@@ -137,7 +137,7 @@ class Circumbinary(object):
             self.gap = np.where(self.rF < 1.7*self.rmin)
         else:
             self.gap = np.where(self.rF < 1.0*self.rmin)
-        self._genSigma()
+        self._genSigma(width=width, expinit=expinit)
         self._genTorque()
         self._genT(bellLin=self.bellLin, tol = 0.0, **kargs)
         self._genVr()
