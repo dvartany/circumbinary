@@ -158,8 +158,7 @@ class Circumbinary(object):
                 np.exp(-0.5*np.square(self.r-expinit)/width**2)/(2*np.pi*self.gamma*self.r*a)
         # Make it dimensionless
         value /= self.mDisk*M/(self.gamma*a)**2
-        idxs = np.where(self.r < 0.1)
-        value[idxs] = 0.0
+        
         value = tuple(value)
 
         # Create the dependent variable and set the boundary conditions
