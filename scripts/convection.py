@@ -459,6 +459,8 @@ if __name__ == '__main__':
                         help='constant (multiplied by 0.2 AU) that determines location of disk relative to star')
     parser.add_argument('--expinit', default=1.0, type=float,
                         help='location (multiplied by gamma*0.2 AU) that determines initial location of Gaussian disk')
+    parser.add_argument('--width', default=0.1, type=float,
+                        help='width (multiplied by gamma*0.2 AU) of initial Gaussian')
     parser.add_argument('--smoothing', default=0.0, type=float,
                         help='Smoothing parameter to pass to RectBivariateSpline.')
     parser.add_argument('--ncell', default=300, type=int,
