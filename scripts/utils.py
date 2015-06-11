@@ -642,7 +642,7 @@ def plotMassR(circ, xlim=None, times=None, nTimes=4, logLog=True):
         else:
             axmassr.semilogx(circ.r, MR, color=_colors[i%7])
             
-    axmassr.set_xlabel(r't (yrs)')
+    axmassr.set_xlabel(r'r/r0')
     axmassr.set_ylabel(r'Cumulative Mass ($M_{\odot}$)')
             
     return fig
