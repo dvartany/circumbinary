@@ -614,6 +614,35 @@ def plotaccret(circ, logLog=True):
     
     return fig
     
+def plotMassR(circ, xlim=None, times=None, nTimes=4, logLog=True):
+    #Plot mass interior to radius R
+    
+    fig = plt.figure()
+    
+    MR = np.zeros(len(circ.r))
+    
+    axmassr = plt.subplot(1, 1, 1)
+    
+    if times == None:
+        times = np.logspace(np.log10(circ.times[0]), np.log10(circ.times[-1]), nTimes)
+        print "You didn't specify times, I'll plot the times: {0}".format(circ.dimensionalTime(times))
+    else:
+        times = circ.dimensionlessTime(np.array(times))
+        
+    for i, t in enumerate(circ.times):
+        circ.loadTime(t)
+        r = circ.r[:-1]*a*circ.gamma
+        Sigma = circ.dimensionalSigma()
+        MR[i] = sum(Sigma[:i]*2*np.pi*circ.mesh.cellVolumes[:i]*(a*circ.gamma)**2)/M
+        
+        print "I'm plotting snapshot {0} yr".format(circ.dimensionalTime())
+        if logLog:
+            axmassr.loglog(circ.r, MR, color=_colors[i%7])
+        else:
+            axmassr.semilogx(circ.r, MR, color=_colors[i%7])
+            
+    return fig
+    
 def getTeff(circ, tau=None, Rmax = 270, tauMin=0.0001):
     """
     Return an array with the effective temperature as defined
