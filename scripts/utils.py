@@ -633,7 +633,8 @@ def plotMassR(circ, xlim=None, times=None, nTimes=4, logLog=True):
         circ.loadTime(t)
         r = circ.r[:-1]*a*circ.gamma
         Sigma = circ.dimensionalSigma()
-        MR[i] = sum(Sigma[:i]*2*np.pi*circ.mesh.cellVolumes[:i]*(a*circ.gamma)**2)/M
+        for j in range(len(circ.r)):
+            MR[j] = sum(Sigma[:j]*2*np.pi*circ.mesh.cellVolumes[:j]*(a*circ.gamma)**2)/M
         
         print "I'm plotting snapshot {0} yr".format(circ.dimensionalTime())
         if logLog:
