@@ -629,7 +629,7 @@ def plotMassR(circ, xlim=None, times=None, nTimes=4, logLog=True):
     else:
         times = circ.dimensionlessTime(np.array(times))
         
-    for i, t in enumerate(circ.times):
+    for i, t in enumerate(times):
         circ.loadTime(t)
         r = circ.r[:-1]*a*circ.gamma
         Sigma = circ.dimensionalSigma()
@@ -641,6 +641,9 @@ def plotMassR(circ, xlim=None, times=None, nTimes=4, logLog=True):
             axmassr.loglog(circ.r, MR, color=_colors[i%7])
         else:
             axmassr.semilogx(circ.r, MR, color=_colors[i%7])
+            
+    axmassr.set_xlabel(r't (yrs)')
+    axmassr.set_ylabel(r'Cumulative Mass ($M_{\odot}$)')
             
     return fig
     
