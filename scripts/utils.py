@@ -614,7 +614,7 @@ def plotaccret(circ, logLog=True):
     
     return fig
  
-def plotrchar(circ,logLog=True)
+def plotrchar(circ,logLog=True):
     
     fig = plt.figure()
     
