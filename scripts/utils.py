@@ -613,7 +613,31 @@ def plotaccret(circ, logLog=True):
     axaccret.set_ylabel(r'WD Accretion in $M_{\odot}$/yr')
     
     return fig
+ 
+def plotrchar(circ,logLog=True)
     
+    fig = plt.figure()
+    
+    MR = np.zeros(len(circ.r))
+    rchar = np.zeros(len(circ.times))
+    
+    axchar = plt.subplot(1,1,1)
+    
+    for i, t in enumerate(circ.times):
+        circ.loadTime(t)
+        r = circ.r[:-1]*a*circ.gamma
+        Sigma = circ.dimensionalSigma()
+        for j in range(len(circ.r)):
+            MR[j] = sum(Sigma[:j]*2*np.pi*circ.mesh.cellVolumes[:j]*(a*circ.gamma)**2)
+        s = np.where(MR < 0.9*sum(Sigma*2*np.pi*circ.mesh.cellVolumes*(a*circ.gamma)**2))[0][-1]
+        
+        rchar[i] = r[s]
+    
+    if logLog:
+        axchar.loglog(circ.dimensionalTime(circ.times),rchar)
+    else:
+        axchar.semilogx(circ.dimensionalTime(circ.times),rchar)
+        
 def plotMassR(circ, xlim=None, times=None, nTimes=4, logLog=True):
     #Plot mass interior to radius R
     
