@@ -70,7 +70,7 @@ def op(T, r, Sigma, idx):
     return kappa
 
 def func(T, r, Sigma, q, f, kappa):
-    return sigma*T**4 - (3*op(T , r, Sigma, kappa)*T**0.5*Sigma*0.0625 + 2/(op(T, r, Sigma,kappa)*Sigma*T**0.5))*(ftid(r,Sigma,q,f) +\
+    return sigma*T**4 - (3*op(T , r, Sigma, kappa)*Sigma*0.0625 + 2/(op(T, r, Sigma,kappa)*Sigma))*(ftid(r,Sigma,q,f) +\
            fv(r,T,Sigma)) - sigma*Tirr(r,q)**4
 
 def getBracket(r, Sigma, idx):
