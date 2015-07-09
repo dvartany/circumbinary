@@ -261,6 +261,7 @@ class Circumbinary(object):
             alphaT[np.where(index==1)] = 0
             alphaT[np.where(index==12)] = 0.02
             alphaT[np.where((index!=1) & (index!=12))] = 0.01
+            self.alphaT = alphaT
         # Initialize T with the interpolation of the various thermodynamic limits
         else:
             self.T = self._interpT()
@@ -269,7 +270,7 @@ class Circumbinary(object):
         """Generate the face variable that stores the velocity values"""
         r = self.r #In dimensionless units (cgs)
         # viscosity at cell centers in cgs
-        self.nu = alphaT*k/mu/self.Omega/self.nu0*self.T
+        self.nu = self.alphaT*k/mu/self.Omega/self.nu0*self.T
         self.visc = r**0.5*self.nu*self.Sigma
         #self.visc.grad.constrain([self.visc/2/self.r[0]], self.mesh.facesLeft)
         #self.Sigma.constrain(self.visc.grad/self.nu*2*self.r**0.5, where=self.mesh.facesLeft)
