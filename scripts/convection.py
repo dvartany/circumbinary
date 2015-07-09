@@ -242,7 +242,25 @@ class Circumbinary(object):
             self._bellLinT = func
             # Save the temperature as an operator variable
             self.T = self.Sigma._UnaryOperatorVariable(lambda x: self._bellLinT(x))
-
+            #define variable alpha
+            r = self.r*self.gamma*a # Dimensional radius
+            T = self.T.value
+            Sigma = self.Sigma.value*self.mDisk*M/(self.gamma*a)**2
+            kappa = np.zeros(T.shape)
+            solved = np.zeros(T.shape, dtype=bool)
+            index = np.zeros(T.shape)
+            for idx in range(1, 13):
+              Tmin, Tmax = thermopy.getBracket(r, Sigma, idx)
+              good = np.logical_and(True, T > Tmin)
+              good = np.logical_and(good, T < Tmax)
+              update = np.logical_and(good, np.logical_not(solved))
+              kappa[update] = thermopy.op(T[update], r[update], Sigma[update], idx)
+              index[update] = idx
+              solved[update] = True
+            alphaT = np.zeros(len(index))
+            alphaT[np.where(index==1)] = 0
+            alphaT[np.where(index==12)] = 0.02
+            alphaT[np.where((index!=1) & (index!=12))] = 0.01
         # Initialize T with the interpolation of the various thermodynamic limits
         else:
             self.T = self._interpT()
@@ -251,7 +269,7 @@ class Circumbinary(object):
         """Generate the face variable that stores the velocity values"""
         r = self.r #In dimensionless units (cgs)
         # viscosity at cell centers in cgs
-        self.nu = alpha*k/mu/self.Omega/self.nu0*self.T
+        self.nu = alphaT*k/mu/self.Omega/self.nu0*self.T
         self.visc = r**0.5*self.nu*self.Sigma
         #self.visc.grad.constrain([self.visc/2/self.r[0]], self.mesh.facesLeft)
         #self.Sigma.constrain(self.visc.grad/self.nu*2*self.r**0.5, where=self.mesh.facesLeft)
