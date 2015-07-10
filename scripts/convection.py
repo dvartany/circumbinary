@@ -258,7 +258,7 @@ class Circumbinary(object):
               index[update] = idx
               solved[update] = True
             alphaT = np.zeros(len(index))
-            alphaT[np.where(index==1)] = 0
+            alphaT[np.where(index==1)] = 1.0e-3
             alphaT[np.where(index==12)] = 0.02
             alphaT[np.where((index!=1) & (index!=12))] = 0.01
             self.alphaT = alphaT
