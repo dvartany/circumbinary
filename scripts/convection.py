@@ -158,6 +158,8 @@ class Circumbinary(object):
                 np.exp(-0.5*np.square(self.r-expinit)/width**2)/(2*np.pi*self.gamma*self.r*a)
         # Make it dimensionless
         value /= self.mDisk*M/(self.gamma*a)**2
+        idxs = np.where(self.r < expinit*0.1)
+        value[idxs] = 0.0
         
         value = tuple(value)
 
