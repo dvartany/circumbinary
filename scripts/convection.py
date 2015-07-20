@@ -4,7 +4,6 @@ import argparse
 import pickle
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
-from scipy.ndimage.filters import gaussian_filter
 
 from fipy import CylindricalGrid1D, CellVariable, FaceVariable, TransientTerm, ExplicitUpwindConvectionTerm,\
                  ExponentialConvectionTerm, ImplicitSourceTerm, UpwindConvectionTerm
@@ -266,7 +265,6 @@ class Circumbinary(object):
             alphaT[np.where(index==1)] = 1.0e-3
             alphaT[np.where(index==12)] = 0.02
             alphaT[np.where((index!=1) & (index!=12))] = 0.01
-            alphaT = gaussian_filter(alphaT,2)
             self.alphaT = alphaT
         # Initialize T with the interpolation of the various thermodynamic limits
         else:
