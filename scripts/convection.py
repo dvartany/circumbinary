@@ -131,7 +131,7 @@ class Circumbinary(object):
         self.odir = odir
         self.bellLin = bellLin
         self.emptydt = emptydt
-        self._genGrid()
+        self._genGrid(loglog=True)
         self.r = self.mesh.cellCenters.value[0]
         self.rF = self.mesh.faceCenters.value[0]
         if self.q > 0.0:
@@ -144,12 +144,20 @@ class Circumbinary(object):
         self._genVr()
         self._buildEq()
 
-    def _genGrid(self, gamma=100.0, inB=1.0):
+    def _genGrid(self, gamma=100.0, inB=1.0, loglog=True):
+        if loglog:
         """Generate a logarithmically spaced grid"""
-        logFaces = np.linspace(np.log(self.rmin), np.log(self.rmax), num=self.ncell+1)
-        logFacesLeft = logFaces[:-1]
-        logFacesRight = logFaces[1:]
-        dr = tuple(np.exp(logFacesRight) - np.exp(logFacesLeft))
+          logFaces = np.linspace(np.log(self.rmin), np.log(self.rmax), num=self.ncell+1)
+          logFacesLeft = logFaces[:-1]
+          logFacesRight = logFaces[1:]
+          dr = tuple(np.exp(logFacesRight) - np.exp(logFacesLeft))
+        else:
+        """generate a linear grid"""
+          Faces = np.linspace(self.rmin, self.rmax, num=self.ncell+1)
+          FacesLeft = Faces[:-1]
+          FacesRight = Faces[1:]
+          dr = tuple(FacesLeft - FacesRight)
+          
         self.mesh = CylindricalGrid1D(dr=dr, origin=(self.rmin,))
 
     def _genSigma(self, width=0.1, expinit=1.0):
@@ -206,7 +214,7 @@ class Circumbinary(object):
             @pickle_results(os.path.join(self.odir, "interpolator.pkl"))
             def buildInterpolator(r, gamma, q, fudge, mDisk, **kargs):
                 # Keep in mind that buildTemopTable() returns the log10's of the values
-                rGrid, SigmaGrid, temp, idxs = thermopy.buildTempTable(r*a*gamma, q=q, f=fudge, **kargs)
+                rGrid, SigmaGrid, temp, idxs = thermopy.Table(r*a*gamma, q=q, f=fudge, **kargs)
                 # Go back to dimensionless units
                 rGrid -= np.log10(a*gamma)
                 SigmaGrid -= np.log10(mDisk*M/gamma**2/a**2)
@@ -274,7 +282,7 @@ class Circumbinary(object):
         """Generate the face variable that stores the velocity values"""
         r = self.r #In dimensionless units (cgs)
         # viscosity at cell centers in cgs
-        self.nu = self.alphaT*k/mu/self.Omega/self.nu0*self.T
+        self.nu = alpha*k/mu/self.Omega/self.nu0*self.T
         self.visc = r**0.5*self.nu*self.Sigma
         #self.visc.grad.constrain([self.visc/2/self.r[0]], self.mesh.facesLeft)
         #self.Sigma.constrain(self.visc.grad/self.nu*2*self.r**0.5, where=self.mesh.facesLeft)
@@ -473,6 +481,8 @@ if __name__ == '__main__':
                         help='The outer boundary of the grid in dimensionless units (r/rMin)')
     parser.add_argument('--rmin', default=1.0e-2, type=float,
                         help='The inner boundary of the grid in dimensionless units (r/rMin)')
+    parser.add_argument('--loglog', action='store_true',
+                        help='If present, generate logarithmcally spaced grid.')
     parser.add_argument('--Sigmax', default=1.0e4, type=float,
                         help='Maximum suface density allowed.')
     parser.add_argument('--M', default=1.9891e+33, type=float,
@@ -505,7 +515,7 @@ if __name__ == '__main__':
                         help='Maximum time to evolve the model to in years')
     parser.add_argument('--dstep', default=5.0e3, type=float,
                         help='Intervals at which to save snapshots in years')
-    parser.add_argument('--offIrr', action='store_true',
+    parser.add_argument('--Irr', action='store_true',
                         help='If present, turn off irradiation heating.')
     parser.add_argument('--rmStripe', action='store_true',
                         help='If present, remove region 5 opacity stripe.')
