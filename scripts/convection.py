@@ -131,7 +131,7 @@ class Circumbinary(object):
         self.odir = odir
         self.bellLin = bellLin
         self.emptydt = emptydt
-        self._genGrid(loglog=True)
+        self._genGrid(loglog=False)
         self.r = self.mesh.cellCenters.value[0]
         self.rF = self.mesh.faceCenters.value[0]
         if self.q > 0.0:
@@ -144,7 +144,7 @@ class Circumbinary(object):
         self._genVr()
         self._buildEq()
 
-    def _genGrid(self, gamma=100.0, inB=1.0, loglog=True):
+    def _genGrid(self, gamma=100.0, inB=1.0, loglog=False):
         if loglog:
           """Generate a logarithmically spaced grid"""
           logFaces = np.linspace(np.log(self.rmin), np.log(self.rmax), num=self.ncell+1)
