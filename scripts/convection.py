@@ -130,7 +130,7 @@ class Circumbinary(object):
         self.odir = odir
         self.bellLin = bellLin
         self.emptydt = emptydt
-        self._genGrid()
+        self._genGrid(log=False)
         self.r = self.mesh.cellCenters.value[0]
         self.rF = self.mesh.faceCenters.value[0]
         if self.q > 0.0:
@@ -143,12 +143,20 @@ class Circumbinary(object):
         self._genVr()
         self._buildEq()
 
-    def _genGrid(self, gamma=100.0, inB=1.0):
-        """Generate a linear spaced grid"""
-        Faces = np.linspace(np.log(self.rmin), np.log(self.rmax), num=self.ncell+1)
-        FacesLeft = Faces[:-1]
-        FacesRight = Faces[1:]
-        dr = tuple(FacesRight - FacesLeft)
+    def _genGrid(self, gamma=100.0, inB=1.0, log=False):
+        if log:
+          """Generate a logarithmically spaced grid"""
+          logFaces = np.linspace(np.log(self.rmin), np.log(self.rmax), num=self.ncell+1)
+          logFacesLeft = logFaces[:-1]
+          logFacesRight = logFaces[1:]
+          dr = tuple(np.exp(logFacesRight) - np.exp(logFacesLeft))
+        else:
+          """Generate a linear spaced grid"""
+          Faces = np.linspace(np.log(self.rmin), np.log(self.rmax), num=self.ncell+1)
+          FacesLeft = Faces[:-1]
+          FacesRight = Faces[1:]
+          dr = tuple(FacesRight - FacesLeft)
+        
         self.mesh = CylindricalGrid1D(dr=dr, origin=(self.rmin,))
 
     def _genSigma(self, width=0.1, expinit=1.0):
@@ -450,6 +458,8 @@ if __name__ == '__main__':
                         help='The outer boundary of the grid in dimensionless units (r/rMin)')
     parser.add_argument('--rmin', default=1.0e-2, type=float,
                         help='The inner boundary of the grid in dimensionless units (r/rMin)')
+    parser.add_argument('--log', action='store_true',
+                        help='If present, generate log grid.')
     parser.add_argument('--Sigmax', default=1.0e4, type=float,
                         help='Maximum suface density allowed.')
     parser.add_argument('--M', default=1.9891e+33, type=float,
