@@ -29,9 +29,12 @@ def ftid(r, Sigma, q, f, off=False):
 def fv(r, T, Sigma):
     return 1.125 * Omega(r)*alpha*k*T/mu * Sigma
 
-def Tirr(r, q):
+def Tirr(r, q, Irr=True):
     LD = 30*L
-    return (((eta/7.0)*2*LD/(4*np.pi*sigma))**2* k/(G*M*mu))**(1.0/7.0)*r**(-3.0/7.0)
+    if Irr:
+        return (((eta/7.0)*2*LD/(4*np.pi*sigma))**2* k/(G*M*mu))**(1.0/7.0)*r**(-3.0/7.0)
+    else:
+        return 0*r
 
 def op(T, r, Sigma, idx):
     if idx == 1:
