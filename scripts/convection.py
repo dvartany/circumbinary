@@ -146,8 +146,8 @@ class Circumbinary(object):
     def _genGrid(self, gamma=100.0, inB=1.0):
         """Generate a linear spaced grid"""
         Faces = np.linspace(np.log(self.rmin), np.log(self.rmax), num=self.ncell+1)
-        FacesLeft = logFaces[:-1]
-        FacesRight = logFaces[1:]
+        FacesLeft = Faces[:-1]
+        FacesRight = Faces[1:]
         dr = tuple(FacesRight - FacesLeft)
         self.mesh = CylindricalGrid1D(dr=dr, origin=(self.rmin,))
 
