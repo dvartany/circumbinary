@@ -146,13 +146,13 @@ class Circumbinary(object):
 
     def _genGrid(self, gamma=100.0, inB=1.0, loglog=True):
         if loglog:
-        """Generate a logarithmically spaced grid"""
+          """Generate a logarithmically spaced grid"""
           logFaces = np.linspace(np.log(self.rmin), np.log(self.rmax), num=self.ncell+1)
           logFacesLeft = logFaces[:-1]
           logFacesRight = logFaces[1:]
           dr = tuple(np.exp(logFacesRight) - np.exp(logFacesLeft))
         else:
-        """generate a linear grid"""
+          """Generate a linear grid"""
           Faces = np.linspace(self.rmin, self.rmax, num=self.ncell+1)
           FacesLeft = Faces[:-1]
           FacesRight = Faces[1:]
