@@ -152,7 +152,7 @@ class Circumbinary(object):
           dr = tuple(np.exp(logFacesRight) - np.exp(logFacesLeft))
         else:
           """Generate a linear spaced grid"""
-          Faces = np.linspace(np.log(self.rmin), np.log(self.rmax), num=self.ncell+1)
+          Faces = np.linspace(self.rmin, self.rmax, num=self.ncell+1)
           FacesLeft = Faces[:-1]
           FacesRight = Faces[1:]
           dr = tuple(FacesRight - FacesLeft)
