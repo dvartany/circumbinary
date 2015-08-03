@@ -29,8 +29,11 @@ def ftid(r, Sigma, q, f, off=False):
 def fv(r, T, Sigma):
     return 1.125 * Omega(r)*alpha*k*T/mu * Sigma
 
-def Tirr(r, q):
-    return 0.0 * r
+def Tirr(r, q, Irr=False):
+    if Irr:
+        return (((eta/7.0)*L/(4*np.pi*sigma))**2* k/(G*M*mu))**(1.0/7.0)*r**(-3.0/7.0)
+    else:
+        return 0.0 * r
 
 def op(T, r, Sigma, idx):
     if idx == 1:
@@ -69,9 +72,9 @@ def op(T, r, Sigma, idx):
             kappa[floor] = 1.41254e-17*T[floor]**3.586
     return kappa
 
-def func(T, r, Sigma, q, f, kappa):
+def func(T, r, Sigma, q, f, kappa, Irr=False):
     return sigma*T**4 - (3*op(T , r, Sigma, kappa)*Sigma*0.0625 + 2/(op(T, r, Sigma,kappa)*Sigma))*(ftid(r,Sigma,q,f) +\
-           fv(r,T,Sigma)) - sigma*Tirr(r,q)**4
+           fv(r,T,Sigma)) - sigma*Tirr(r,q, Irr)**4
 
 def getBracket(r, Sigma, idx):
     if idx == 1:
@@ -112,20 +115,20 @@ def getBracket(r, Sigma, idx):
     else:
         raise ValueError("Opacity index out of range")
 
-def Tfin(r, Sigma, q, f, idx, delta=0.0):
+def Tfin(r, Sigma, q, f, idx, Irr=False, delta=0.0):
     Tmin, Tmax = getBracket(r, Sigma, idx)
     try:
-        T = brentq(func, (1.0-delta)*Tmin, (1.0+delta)*Tmax, args=(r,Sigma,q,f,idx), maxiter=200)
+        T = brentq(func, (1.0-delta)*Tmin, (1.0+delta)*Tmax, args=(r,Sigma,q,f,idx,Irr), maxiter=200)
     except ValueError, e:
-        return Tfin(r, Sigma, q, f, idx+1, delta=delta)
+        return Tfin(r, Sigma, q, f, idx+1, Irr, delta=delta)
     else:
         if (1.0-delta)*Tmin <= T <= (1.0+delta)*Tmax:
             return idx, T
         else:
-            return Tfin(r, Sigma, q, f, idx+1, delta=delta)
+            return Tfin(r, Sigma, q, f, idx+1, Irr, delta=delta)
 
 def buildTempTable(rGrid, q=1.0, f=0.002, Sigmin=1.0e-5, Sigmax=1.0e6, Sigres=2000, delta=0.1,
-                   rmStripe=False, smoothT=False, sigmaSigma=10, sigmaR=2, **kargs):
+                   rmStripe=False, smoothT=False, sigmaSigma=10, sigmaR=2, Irr=False, **kargs):
     """
         Return a table of precomputed temperatures as a function of radius and surface density.
         Arguments:
@@ -145,18 +148,18 @@ def buildTempTable(rGrid, q=1.0, f=0.002, Sigmin=1.0e-5, Sigmax=1.0e6, Sigres=20
     for i, r in enumerate(rGrid):
         for j, Sigma in enumerate(SigmaGrid):
             try:
-                idxs[-j-1,i], temp[i,j] = Tfin(r, Sigma, q, f, 1)
+                idxs[-j-1,i], temp[i,j] = Tfin(r, Sigma, q, f, Irr, 1)
             except ValueError, e:
                 try:
-                    idxs[-j-1,i], temp[i,j] = Tfin(r, Sigma, q, f, 1, delta=0.07)
+                    idxs[-j-1,i], temp[i,j] = Tfin(r, Sigma, q, f, 1, Irr, delta=0.07)
                 except ValueError, e:
                     try:
-                        idxs[-j-1,i], temp[i,j] = Tfin(r, Sigma, q, f, 1, delta=0.2)
+                        idxs[-j-1,i], temp[i,j] = Tfin(r, Sigma, q, f, 1, Irr, delta=0.2)
                     except ValueError, e:
                         raise
     if rmStripe:
         for i, j in zip(np.where(idxs==5)[0],np.where(idxs==5)[1]):
-            idxs[i,j], temp[j,-i-1] = Tfin(rGrid[j],SigmaGrid[-i -1], q, f, 1, delta=0.07)    
+            idxs[i,j], temp[j,-i-1] = Tfin(rGrid[j],SigmaGrid[-i -1], q, f, 1, Irr, delta=0.07)    
     if smoothT:
         from scipy.ndimage.filters import gaussian_filter
         temp = gaussian_filter(temp, (sigmaR, sigmaSigma))
