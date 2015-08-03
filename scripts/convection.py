@@ -203,7 +203,7 @@ class Circumbinary(object):
             @pickle_results(os.path.join(self.odir, "interpolator.pkl"))
             def buildInterpolator(r, gamma, q, fudge, mDisk, **kargs):
                 # Keep in mind that buildTemopTable() returns the log10's of the values
-                rGrid, SigmaGrid, temp, idxs = thermopy.buildTempTable(r*a*gamma, q=q, f=fudge, Irr=False,**kargs)
+                rGrid, SigmaGrid, temp, idxs = thermopy.buildTempTable(r*a*gamma, q=q, f=fudge, **kargs)
                 # Go back to dimensionless units
                 rGrid -= np.log10(a*gamma)
                 SigmaGrid -= np.log10(mDisk*M/gamma**2/a**2)
