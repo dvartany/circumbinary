@@ -203,7 +203,7 @@ class Circumbinary(object):
             @pickle_results(os.path.join(self.odir, "interpolator.pkl"))
             def buildInterpolator(r, gamma, q, fudge, mDisk, **kargs):
                 # Keep in mind that buildTemopTable() returns the log10's of the values
-                rGrid, SigmaGrid, temp, idxs = thermopy.buildTempTable(r*a*gamma, q=q, f=fudge, **kargs)
+                rGrid, SigmaGrid, temp, idxs = thermopy.buildTempTable(r*a*gamma, q=q, f=fudge, Irr=False,**kargs)
                 # Go back to dimensionless units
                 rGrid -= np.log10(a*gamma)
                 SigmaGrid -= np.log10(mDisk*M/gamma**2/a**2)
@@ -482,8 +482,8 @@ if __name__ == '__main__':
                         help='Maximum time to evolve the model to in years')
     parser.add_argument('--dstep', default=5.0e3, type=float,
                         help='Intervals at which to save snapshots in years')
-    parser.add_argument('--offIrr', action='store_true',
-                        help='If present, turn off irradiation heating.')
+    parser.add_argument('--Irr', action='store_true',
+                        help='If present, turn on irradiation heating.')
     parser.add_argument('--rmStripe', action='store_true',
                         help='If present, remove region 5 opacity stripe.')
     parser.add_argument('--smoothT', action='store_true',
