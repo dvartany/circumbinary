@@ -10,6 +10,8 @@ from fipy import CylindricalGrid1D, CellVariable, FaceVariable, TransientTerm, E
 from fipy.steppers import sweepMonotonic
 from fipy.boundaryConditions import FixedFlux
 
+from scipy.ndimage.filters import gaussian_filter
+
 import thermopy
 from constants import *
 
@@ -111,7 +113,7 @@ def pickle_results(filename=None, verbose=True):
 class Circumbinary(object):
     def __init__(self, rmin=1.0e-2, rmax=1.0e4, ncell=300, dt=1.0e-6, delta=1.0e-100,
                  fudge=1.0e-3, q=1.0, gamma=100, mdisk=0.1, odir='output',
-                 bellLin=True, emptydt=0.001, width=0.1, expinit=1.0, **kargs):
+                 bellLin=True, vary=False, emptydt=0.001, width=0.1, expinit=1.0, **kargs):
         self.rmax = rmax
         self.rmin = rmin
         self.ncell = ncell
@@ -140,7 +142,7 @@ class Circumbinary(object):
         self._genSigma(width=width, expinit=expinit)
         self._genTorque()
         self._genT(bellLin=self.bellLin, tol = 0.0, **kargs)
-        self._genVr()
+        self._genVr(vary=False)
         self._buildEq()
 
     def _genGrid(self, gamma=100.0, inB=1.0):
@@ -241,17 +243,45 @@ class Circumbinary(object):
             # Store interpolator as an instance method
             self._bellLinT = func
             # Save the temperature as an operator variable
+            
             self.T = self.Sigma._UnaryOperatorVariable(lambda x: self._bellLinT(x))
-
+            
+            T = self.T
+            Sigma = self.Sigma
+            r = self.r*a*self.gamma
+            
+            solved = np.zeros(T.shape, dtype=bool)
+            index = np.zeros(T.shape)
+            
+            for idx in range(1, 13):
+              Tmin, Tmax = thermopy.getBracket(r, Sigma, idx)
+              good = np.logical_and(True, T > Tmin)
+              good = np.logical_and(good, T < Tmax)
+              update = np.logical_and(good, np.logical_not(solved))
+              index[update] = idx
+              solved[update] = True
+            
+            alphak = np.zeros(T.shape)
+            alphak[np.where(index==12)] = 1.0e-2
+            alphak[np.where(index==1)] = 1.0e-4
+            alphak[np.where((index < 12) & (index > 1))] = 1.0e-3
+            
+            alphak= gaussian_filter(alphak, 1)
+            
         # Initialize T with the interpolation of the various thermodynamic limits
         else:
             self.T = self._interpT()
 
-    def _genVr(self):
+    def _genVr(self,vary=False):
         """Generate the face variable that stores the velocity values"""
         r = self.r #In dimensionless units (cgs)
         # viscosity at cell centers in cgs
-        self.nu = alpha*k/mu/self.Omega/self.nu0*self.T
+        alphavar = np.zeros(T.shape)
+        if vary:
+          alphavar = alphak
+        else:
+          alphavar = alpha
+        self.nu = alphavar*k/mu/self.Omega/self.nu0*self.T
         self.visc = r**0.5*self.nu*self.Sigma
         #self.visc.grad.constrain([self.visc/2/self.r[0]], self.mesh.facesLeft)
         #self.Sigma.constrain(self.visc.grad/self.nu*2*self.r**0.5, where=self.mesh.facesLeft)
@@ -460,6 +490,8 @@ if __name__ == '__main__':
                         help='location (multiplied by gamma*0.2 AU) that determines initial location of Gaussian disk')
     parser.add_argument('--width', default=0.1, type=float,
                         help='width (multiplied by gamma*0.2 AU) of initial Gaussian')
+    parser.add_argument('--vary', action='store_true',
+                        help='If present, have variable alpha.')
     parser.add_argument('--smoothing', default=0.0, type=float,
                         help='Smoothing parameter to pass to RectBivariateSpline.')
     parser.add_argument('--ncell', default=300, type=int,
