@@ -246,8 +246,8 @@ class Circumbinary(object):
             
             self.T = self.Sigma._UnaryOperatorVariable(lambda x: self._bellLinT(x))
             
-            T = self.T
-            Sigma = self.Sigma
+            T = self.T.value
+            Sigma = self.Sigma.value
             r = self.r*a*self.gamma
             
             solved = np.zeros(T.shape, dtype=bool)
