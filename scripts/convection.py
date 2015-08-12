@@ -276,7 +276,7 @@ class Circumbinary(object):
         """Generate the face variable that stores the velocity values"""
         r = self.r #In dimensionless units (cgs)
         # viscosity at cell centers in cgs
-        alphavar = np.zeros(T.shape)
+        alphavar = np.zeros(self.T.shape)
         if vary:
           alphavar = alphak
         else:
