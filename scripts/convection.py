@@ -142,7 +142,7 @@ class Circumbinary(object):
         self._genSigma(width=width, expinit=expinit)
         self._genTorque()
         self._genT(bellLin=self.bellLin, tol = 0.0, **kargs)
-        self._genVr(vary=False)
+        self._genVr(vary=vary)
         self._buildEq()
 
     def _genGrid(self, gamma=100.0, inB=1.0):
