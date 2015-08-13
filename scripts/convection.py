@@ -160,6 +160,8 @@ class Circumbinary(object):
                 np.exp(-0.5*np.square(self.r-expinit)/width**2)/(2*np.pi*self.gamma*self.r*a)
         # Make it dimensionless
         value /= self.mDisk*M/(self.gamma*a)**2
+        idxs = np.where(self.r < expinit*0.7)
+        value[idxs] = 0.0
         
         value = tuple(value)
 
@@ -264,7 +266,7 @@ class Circumbinary(object):
             alphak = np.zeros(T.shape)
             alphak[np.where(index==12)] = 0.02
             alphak[np.where(index==1)] = 1.0e-3
-            alphak[np.where((index < 12) & (index > 1))] = 0.01
+            alphak[np.where((index != 1) & (index != 12))] = 0.01
             
             alphak = gaussian_filter(alphak, 2)
             self.alphak = alphak
@@ -280,8 +282,8 @@ class Circumbinary(object):
         if vary:
           alphavar = self.alphak
         else:
-          alphavar = alpha
-        self.nu = alphavar*k/mu/self.Omega/self.nu0*self.T
+          alphavar = self.alphak
+        self.nu = self.alphak*k/mu/self.Omega/self.nu0*self.T
         self.visc = r**0.5*self.nu*self.Sigma
         #self.visc.grad.constrain([self.visc/2/self.r[0]], self.mesh.facesLeft)
         #self.Sigma.constrain(self.visc.grad/self.nu*2*self.r**0.5, where=self.mesh.facesLeft)
