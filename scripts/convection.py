@@ -282,7 +282,7 @@ class Circumbinary(object):
         if vary:
           alphavar = self.alphak
         else:
-          alphavar = self.alphak
+          alphavar = alpha
         self.nu = alphavar*k/mu/self.Omega/self.nu0*self.T
         self.visc = r**0.5*self.nu*self.Sigma
         #self.visc.grad.constrain([self.visc/2/self.r[0]], self.mesh.facesLeft)
