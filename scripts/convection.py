@@ -247,7 +247,7 @@ class Circumbinary(object):
             self.T = self.Sigma._UnaryOperatorVariable(lambda x: self._bellLinT(x))
             
             T = self.T.value
-            Sigma = self.Sigma.value
+            Sigma = self.Sigma.value*self.mDisk*M/(self.gamma*a)**2
             r = self.r*a*self.gamma
             
             solved = np.zeros(T.shape, dtype=bool)
@@ -262,11 +262,11 @@ class Circumbinary(object):
               solved[update] = True
             
             alphak = np.zeros(T.shape)
-            alphak[np.where(index==12)] = 1.0e-2
-            alphak[np.where(index==1)] = 1.0e-4
-            alphak[np.where((index < 12) & (index > 1))] = 1.0e-3
+            alphak[np.where(index==12)] = 0.02
+            alphak[np.where(index==1)] = 1.0e-3
+            alphak[np.where((index < 12) & (index > 1))] = 0.01
             
-            alphak = gaussian_filter(alphak, 1)
+            alphak = gaussian_filter(alphak, 2)
             self.alphak = alphak
         # Initialize T with the interpolation of the various thermodynamic limits
         else:
