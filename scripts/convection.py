@@ -266,8 +266,8 @@ class Circumbinary(object):
             alphak[np.where(index==1)] = 1.0e-4
             alphak[np.where((index < 12) & (index > 1))] = 1.0e-3
             
-            alphak= gaussian_filter(alphak, 1)
-            
+            alphak = gaussian_filter(alphak, 1)
+            self.alphak = alphak
         # Initialize T with the interpolation of the various thermodynamic limits
         else:
             self.T = self._interpT()
@@ -278,7 +278,7 @@ class Circumbinary(object):
         # viscosity at cell centers in cgs
         alphavar = np.zeros(self.T.shape)
         if vary:
-          alphavar = alphak
+          alphavar = self.alphak
         else:
           alphavar = alpha
         self.nu = alphavar*k/mu/self.Omega/self.nu0*self.T
